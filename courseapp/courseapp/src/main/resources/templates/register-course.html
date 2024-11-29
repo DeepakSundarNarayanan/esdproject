@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register Course</title>
+</head>
+<body>
+<h1>Register for a Course</h1>
+
+<!-- Display an error message if there is an error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/search-course}" method="post">
+    <label for="term">Select Term:</label>
+    <select id="term" name="term" required>
+        <option value="" disabled selected>Select a term</option>
+        <option th:each="term : ${terms}" th:value="${term}" th:text="${term}"></option>
+    </select>
+    <br><br>
+
+    <button type="submit">Next</button>
+</form>
+
+</body>
+</html>

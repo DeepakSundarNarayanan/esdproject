@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Course</title>
+</head>
+<body>
+<h1>Search for a Course</h1>
+
+<!-- Display an error message if there is an error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/filter-courses}" method="post">
+    <!-- Hidden field to carry the term -->
+    <input type="hidden" name="term" th:value="${term}">
+
+    <label for="courseCode">Course Code:</label>
+    <input type="text" id="courseCode" name="courseCode">
+    <br><br>
+
+    <label for="courseNumber">Course Number:</label>
+    <input type="text" id="courseNumber" name="courseNumber">
+    <br><br>
+
+    <label for="courseName">Course Name:</label>
+    <input type="text" id="courseName" name="courseName">
+    <br><br>
+
+    <button type="submit">Search</button>
+</form>
+
+</body>
+</html>

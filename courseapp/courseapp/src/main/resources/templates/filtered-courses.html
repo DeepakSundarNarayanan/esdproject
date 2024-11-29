@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Filtered Courses</title>
+</head>
+<body>
+<h1>Filtered Courses</h1>
+
+<!-- Display an error message if there is an error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<!-- Display a success message -->
+<div th:if="${success}" style="color: green;">
+    <p th:text="${success}"></p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Course Code</th>
+        <th>Course Number</th>
+        <th>Course Name</th>
+        <th>Instructor</th>
+        <th>Timings</th>
+        <th>Term</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+        <td th:text="${course.courseCode}"></td>
+        <td th:text="${course.courseNumber}"></td>
+        <td th:text="${course.courseName}"></td>
+        <td th:text="${course.instructor}"></td>
+        <td th:text="${course.timings}"></td>
+        <td th:text="${course.term}"></td>
+        <td>
+            <form th:action="@{/register-course}" method="post">
+                <input type="hidden" name="courseId" th:value="${course.id}">
+                <input type="hidden" name="userId" th:value="${userId}">
+                <button type="submit" th:if="${registeredCourses != null and registeredCourses.size() < 2}">Register</button>
+                <span th:if="${registeredCourses == null or registeredCourses.size() >= 2}">Maximum Courses Registered</span>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

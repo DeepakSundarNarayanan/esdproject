@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<h2>Welcome to the Admin Dashboard</h2>
+<p>Here you can upload data.</p>
+
+<h3>Upload Excel File</h3>
+<form th:action="@{/admin/upload-courses}" method="post" enctype="multipart/form-data">
+    <label for="file">Select Excel file to upload:</label>
+    <input type="file" id="file" name="file" accept=".xls,.xlsx" required>
+    <br><br>
+    <button type="submit">Upload</button>
+</form>
+
+<!-- Success message -->
+<div th:if="${successMessage != null}" style="margin-top: 20px; color: green;">
+    <strong th:text="${successMessage}"></strong>
+</div>
+
+<!-- Error message -->
+<div th:if="${errorMessage != null}" style="margin-top: 20px; color: red;">
+    <strong th:text="${errorMessage}"></strong>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registered Courses</title>
+</head>
+<body>
+<h1>Registered Courses</h1>
+
+<!-- Display an error message if there is an error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<!-- Display the registered courses -->
+<table border="1" th:if="${registeredCourses != null}">
+    <thead>
+    <tr>
+        <th>Course Code</th>
+        <th>Course Number</th>
+        <th>Course Name</th>
+        <th>Instructor</th>
+        <th>Timings</th>
+        <th>Term</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${registeredCourses}">
+        <td th:text="${course.courseCode}"></td>
+        <td th:text="${course.courseNumber}"></td>
+        <td th:text="${course.courseName}"></td>
+        <td th:text="${course.instructor}"></td>
+        <td th:text="${course.timings}"></td>
+        <td th:text="${course.term}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- No courses registered message -->
+<div th:if="${registeredCourses == null || registeredCourses.isEmpty()}" style="color: blue;">
+    <p>No courses registered yet.</p>
+</div>
+
+<a th:href="@{/}">Back to Dashboard</a>
+</body>
+</html>
