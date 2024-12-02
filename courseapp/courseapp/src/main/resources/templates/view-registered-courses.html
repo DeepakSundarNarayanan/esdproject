@@ -11,6 +11,11 @@
     <p th:text="${error}"></p>
 </div>
 
+<!-- Display success message -->
+<div th:if="${success}" style="color: green;">
+    <p th:text="${success}"></p>
+</div>
+
 <!-- Display the registered courses -->
 <table border="1" th:if="${registeredCourses != null}">
     <thead>
@@ -21,6 +26,8 @@
         <th>Instructor</th>
         <th>Timings</th>
         <th>Term</th>
+        <th>Number of seats</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -31,12 +38,21 @@
         <td th:text="${course.instructor}"></td>
         <td th:text="${course.timings}"></td>
         <td th:text="${course.term}"></td>
+        <td th:text="${course.numberOfSeats}"></td>
+        <td>
+            <!-- Remove Button -->
+            <form th:action="@{/remove-course}" method="post">
+                <input type="hidden" name="courseId" th:value="${course.id}">
+                <input type="hidden" name="userId" th:value="${userId}">
+                <button type="submit">Remove</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
 
-<!-- No courses registered message -->
-<div th:if="${registeredCourses == null || registeredCourses.isEmpty()}" style="color: blue;">
+<!-- Handle no courses registered -->
+<div th:if="${registeredCourses == null or registeredCourses.isEmpty()}" style="color: blue;">
     <p>No courses registered yet.</p>
 </div>
 

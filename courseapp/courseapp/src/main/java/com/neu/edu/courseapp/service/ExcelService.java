@@ -54,6 +54,7 @@ public class ExcelService {
             course.setProgram(getCellValue(row.getCell(9)));
             course.setCourseNumber(getCellValue(row.getCell(10)));
             course.setCourseCode(getCellValue(row.getCell(11)));
+            course.setNumberOfSeats(Integer.parseInt(getCellValue(row.getCell(12))));
 
             courses.add(course);
         }

@@ -57,4 +57,13 @@ public class UserDAO {
             return registeredCourses;
         }
     }
+
+    public void saveOrUpdateCourse(Course course) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.saveOrUpdate(course);
+            session.getTransaction().commit();
+        }
+    }
+
 }

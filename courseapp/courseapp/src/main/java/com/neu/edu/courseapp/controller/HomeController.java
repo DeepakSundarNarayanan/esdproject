@@ -4,6 +4,7 @@ import com.neu.edu.courseapp.dao.CourseDAO;
 import com.neu.edu.courseapp.dao.UserDAO;
 import com.neu.edu.courseapp.modals.Course;
 import com.neu.edu.courseapp.modals.User;
+import com.neu.edu.courseapp.service.EmailService;
 import com.neu.edu.courseapp.service.ExcelService;
 import com.neu.edu.courseapp.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -35,12 +36,11 @@ public class HomeController {
     @Autowired
     private UserDAO userDAO;
     @Autowired
-    private SessionFactory sessionFactory;
-    @Autowired
     UserService userService;
-
     @Autowired
     private CourseDAO courseDAO;
+    @Autowired
+    EmailService emailService;
 
     @GetMapping(value = "/")
     public String home() {
@@ -96,6 +96,8 @@ public class HomeController {
             userIdCookie.setHttpOnly(true); // Secure cookie to prevent JavaScript access
             response.addCookie(userIdCookie);
 
+//            emailService.sendLoginEmail(username, user.get().getUsername());
+
             ModelAndView mav = new ModelAndView("success-login");
             mav.addObject("adminName", user.get().getUsername());
             mav.addObject("userId", user.get().getId()); // Pass userId
@@ -137,7 +139,7 @@ public class HomeController {
     @PostMapping("/search-course")
     public ModelAndView showCourseSearchPage(@RequestParam("term") String term) {
         ModelAndView mav = new ModelAndView("search-course");
-        mav.addObject("term", term); // Pass the selected term
+        mav.addObject("term", term);
         return mav;
     }
 
@@ -258,12 +260,48 @@ public class HomeController {
             // Fetch registered courses for the user
             List<Course> registeredCourses = userDAO.getRegisteredCourses(userId);
             mav.addObject("registeredCourses", registeredCourses);
+            mav.addObject("userId", userId);
         } catch (Exception e) {
             e.printStackTrace();
             mav.addObject("error", "Failed to fetch registered courses: " + e.getMessage());
         }
         return mav;
     }
+
+    @PostMapping("/remove-course")
+    public ModelAndView removeCourse(@RequestParam("courseId") Long courseId,
+                                     @RequestParam("userId") Long userId) {
+        ModelAndView mav = new ModelAndView("redirect:/view-courses?userId=" + userId);
+        try {
+            userService.removeCourseFromUser(userId, courseId);
+            mav.addObject("success", "Successfully removed the course!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            mav.addObject("error", e.getMessage());
+        }
+        return mav;
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // Remove the userId cookie
+        Cookie cookie = new Cookie("userId", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        // Redirect to the home page
+        return "redirect:/";
+    }
+
+
+
+
+
+
+
+
 
 
 

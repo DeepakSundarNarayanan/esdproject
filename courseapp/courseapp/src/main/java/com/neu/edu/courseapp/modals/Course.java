@@ -24,6 +24,15 @@ public class Course {
     private String program; // Corresponds to "Program"
     private String courseNumber; // Corresponds to "Course No"
     private String courseCode; // Corresponds to "Course code"
+    private int numberOfSeats;
+
+    public int getNumberOfSeats() {
+        return numberOfSeats;
+    }
+
+    public void setNumberOfSeats(int numberOfSeats) {
+        this.numberOfSeats = numberOfSeats;
+    }
 
     public String getCourseCode() {
         return courseCode;
