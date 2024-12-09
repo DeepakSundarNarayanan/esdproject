@@ -24,6 +24,10 @@ public class User {
     @JoinColumn(name = "course2_id")
     private Course course2;
 
+    private String firstname;
+    private String lastname;
+
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -63,5 +67,21 @@ public class User {
 
     public void setCourse2(Course course2) {
         this.course2 = course2;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

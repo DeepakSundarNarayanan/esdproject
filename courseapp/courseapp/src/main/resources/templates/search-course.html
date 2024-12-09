@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Search Course</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <h1>Search for a Course</h1>
@@ -16,19 +17,61 @@
     <input type="hidden" name="term" th:value="${term}">
 
     <label for="courseCode">Course Code:</label>
-    <input type="text" id="courseCode" name="courseCode">
+    <input type="text" id="courseCode" name="courseCode" list="courseCodeSuggestions">
+    <datalist id="courseCodeSuggestions"></datalist>
     <br><br>
 
     <label for="courseNumber">Course Number:</label>
-    <input type="text" id="courseNumber" name="courseNumber">
+    <input type="text" id="courseNumber" name="courseNumber" list="courseNumberSuggestions">
+    <datalist id="courseNumberSuggestions"></datalist>
     <br><br>
 
     <label for="courseName">Course Name:</label>
-    <input type="text" id="courseName" name="courseName">
+    <input type="text" id="courseName" name="courseName" list="courseNameSuggestions">
+    <datalist id="courseNameSuggestions"></datalist>
     <br><br>
 
     <button type="submit">Search</button>
 </form>
+
+<script>
+    // Function to fetch suggestions and populate datalist
+    function fetchSuggestions(endpoint, inputId, datalistId) {
+        const query = $(inputId).val();
+        if (query.length > 1) { // Only fetch suggestions for 2+ characters
+            $.ajax({
+                url: `/suggestions/${endpoint}`,
+                type: 'GET',
+                data: { term: query },
+                success: function (data) {
+                    const datalist = $(datalistId);
+                    datalist.empty(); // Clear existing options
+                    data.forEach(item => {
+                        datalist.append(`<option value="${item}">`);
+                    });
+                },
+                error: function () {
+                    console.error("Failed to fetch suggestions.");
+                }
+            });
+        }
+    }
+
+    // Attach event listeners for each input field
+    $(document).ready(function () {
+        $('#courseCode').on('input', function () {
+            fetchSuggestions('course-code', '#courseCode', '#courseCodeSuggestions');
+        });
+
+        $('#courseNumber').on('input', function () {
+            fetchSuggestions('course-number', '#courseNumber', '#courseNumberSuggestions');
+        });
+
+        $('#courseName').on('input', function () {
+            fetchSuggestions('course-name', '#courseName', '#courseNameSuggestions');
+        });
+    });
+</script>
 
 </body>
 </html>

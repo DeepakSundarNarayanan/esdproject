@@ -2,20 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Filtered Courses</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #success-message {
+            color: green;
+            display: none;
+        }
+
+        #error-message {
+            color: red;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <h1>Filtered Courses</h1>
 
-<!-- Display an error message if there is an error -->
-<div th:if="${error}" style="color: red;">
-    <p th:text="${error}"></p>
-</div>
-
-<!-- Display a success message -->
-<div th:if="${success}" style="color: green;">
-    <p th:text="${success}"></p>
-</div>
-
+<!-- Success and Error Messages -->
+<div id="success-message"></div>
+<div id="error-message"></div>
+<!-- Dynamic term display for debugging -->
+<input type="hidden" id="term" name="term" th:value="${term}" />
 <table border="1">
     <thead>
     <tr>
@@ -39,16 +46,100 @@
         <td th:text="${course.term}"></td>
         <td th:text="${course.numberOfSeats}"></td>
         <td>
-            <form th:action="@{/register-course}" method="post">
-                <input type="hidden" name="courseId" th:value="${course.id}">
-                <input type="hidden" name="userId" th:value="${userId}">
-                <button type="submit" th:if="${registeredCourses != null and registeredCourses.size() < 2}">Register</button>
-                <span th:if="${registeredCourses == null or registeredCourses.size() >= 2}">Maximum Courses Registered</span>
-            </form>
+            <button class="register-button"
+                    th:data-course-id="${course.id}"
+                    th:data-user-id="${userId}"
+                    th:if="${registeredCourses != null and registeredCourses.size() < 2}">
+                Register
+            </button>
+            <span th:if="${registeredCourses == null or registeredCourses.size() >= 2}">
+                Maximum Courses Registered
+            </span>
         </td>
     </tr>
     </tbody>
 </table>
+
+<div class="pagination">
+    <button th:disabled="${currentPage == 0}"
+            th:onclick="'filterCourses(' + (${currentPage - 1}) + ')'">
+        Previous
+    </button>
+    <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+    <button th:disabled="${currentPage + 1 == totalPages}"
+            th:onclick="'filterCourses(' + (${currentPage + 1}) + ')'">
+        Next
+    </button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".register-button").click(function (e) {
+            e.preventDefault(); // Prevent default button action
+
+            // Extract courseId and userId from data attributes
+            const courseId = $(this).data("course-id");
+            const userId = $(this).data("user-id");
+
+            // AJAX POST request
+            $.ajax({
+                url: '/register-course',
+                type: 'POST',
+                data: { courseId: courseId, userId: userId },
+                success: function (response) {
+                    // Display success message
+                    $("#success-message").text(response).show();
+                    $("#error-message").hide();
+
+                    // Update UI to reflect registration
+                    const button = $(`.register-button[data-course-id="${courseId}"]`);
+                    button.replaceWith('<span>Registered</span>');
+
+                    // Update seat count
+                    const seatsCell = button.closest('tr').find('td:nth-child(7)'); // Seat column
+                    const currentSeats = parseInt(seatsCell.text());
+                    if (currentSeats > 0) {
+                        seatsCell.text(currentSeats - 1);
+                    }
+                },
+                error: function (xhr) {
+                    // Display error message
+                    $("#error-message").text(xhr.responseText || "Failed to register for the course.").show();
+                    $("#success-message").hide();
+                }
+            });
+        });
+    });
+
+    function filterCourses(page) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/filter-courses";
+
+        // Add form inputs dynamically
+        const termInput = document.createElement("input");
+        termInput.type = "hidden";
+        termInput.name = "term";
+        termInput.value = document.querySelector("[name='term']").value;
+
+        const pageInput = document.createElement("input");
+        pageInput.type = "hidden";
+        pageInput.name = "page";
+        pageInput.value = page;
+
+        const sizeInput = document.createElement("input");
+        sizeInput.type = "hidden";
+        sizeInput.name = "size";
+        sizeInput.value = 10;
+
+        form.appendChild(termInput);
+        form.appendChild(pageInput);
+        form.appendChild(sizeInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 
 </body>
 </html>

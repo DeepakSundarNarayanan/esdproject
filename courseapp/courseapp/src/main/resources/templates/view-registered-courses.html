@@ -55,7 +55,7 @@
 <div th:if="${registeredCourses == null or registeredCourses.isEmpty()}" style="color: blue;">
     <p>No courses registered yet.</p>
 </div>
-
-<a th:href="@{/}">Back to Dashboard</a>
+<a th:href="@{/generate-pdf(userId=${userId})}" target="_blank">Download PDF</a><br>
+<a th:href="@{/success-login(userId=${userId}, adminName=${adminName})}">Back to Dashboard</a>
 </body>
 </html>
